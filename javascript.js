@@ -6,13 +6,108 @@
  * Date: 5 February 2024
  */
 
-const SCREEN_SIZE = 10;
-let screen = document.querySelector('.screen');
+const SCREEN_SIZE = 20;
+let canvas = document.querySelector('.canvas');
+let row = document.querySelector('.row');
+let pixel = document.querySelector('.pixel');
+let toolbar = document.querySelector('.toolbar');
+let toolbarRow = document.querySelector('.toolbar-row');
+let tool = document.querySelector('.tool');
+let clearCanvasButton = document.querySelector('.clear-button');
+let refreshColorsButton = document.querySelector('.color-button');
+let isDrawing = false;
+let color = 'yellow';
+//------------------------------------------------------
 
-for (let i = 0; i < SCREEN_SIZE; i++) {
+createCanvas(SCREEN_SIZE);
+createToolBar(12, 2);
+
+
+canvas.addEventListener('mousedown', e => {
+    isDrawing = true;
+    if(e.target.className === 'pixel') {
+        e.target.style.background = color;
+    }
+});
+
+canvas.addEventListener('mouseup', e => {
+    isDrawing = false;
+});
+
+canvas.addEventListener('mouseover', e => {
+    if(isDrawing === true && e.target.className === 'pixel') {
+        e.target.style.background = color;
+    }
+});
+
+toolbar.addEventListener('click', e => {
+    if(e.target.className === 'tool') {
+        color = e.target.style.backgroundColor;
+    }
+});
+
+clearCanvasButton.addEventListener('click', e => {
     
-    let row = document.createElement('div');
-    row.classList.add('row');
+    while(canvas.firstChild) {
+        canvas.removeChild(canvas.firstChild);
+    }
+    createCanvas(SCREEN_SIZE);
+});
+
+refreshColorsButton.addEventListener('click', e => {
+
+    while(toolbar.firstChild) {
+        toolbar.removeChild(toolbar.firstChild);
+    }
+    createToolBar(12, 2);
+});
+
+
+function createCanvas(size) {
+    for (let i = 0; i < size; i++) {
     
+        let row = document.createElement('div');
+        row.classList.add('row');
+        canvas.appendChild(row);
+    
+        for (let j = 0; j < size; j++) {
+            let pixel = document.createElement('div');
+            pixel.classList.add('pixel');
+            if((j % 2 === 0) && (i % 2 === 0)) {
+                pixel.style.background = '#E9E9E9';
+            } 
+            if((j % 2 !== 0) && (i % 2 !== 0)) {
+                pixel.style.background = '#E9E9E9'
+            }
+            row.appendChild(pixel);
+        }
+    }
+}
+
+function createToolBar(rows, collums) {
+
+    for (let i = 0; i < rows; i++) {
+
+        let toolbarRow = document.createElement('div');
+        toolbarRow.classList.add('toolbar-row');
+        toolbar.appendChild(toolbarRow);
+
+        for (let j = 0; j < collums; j++) {
+
+            let tool = document.createElement('div');
+            tool.classList.add('tool');
+            tool.style.background = createRandomColor();
+            toolbarRow.appendChild(tool);
+        }
+    }
+
+    function createRandomColor() {
+        const HEX_VALUES = '0123456789ABCDEF';
+        let randomColor = '';
+        for (let i = 0; i < 6; i++) {
+            randomColor += HEX_VALUES[Math.floor(Math.random() * 16)];
+        }
+        return '#' + randomColor;
+    }
 }
 
