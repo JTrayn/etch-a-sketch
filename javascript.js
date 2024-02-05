@@ -6,7 +6,7 @@
  * Date: 5 February 2024
  */
 
-const SCREEN_SIZE = 20;
+const SCREEN_SIZE = 50;
 let canvas = document.querySelector('.canvas');
 let row = document.querySelector('.row');
 let pixel = document.querySelector('.pixel');
@@ -15,6 +15,7 @@ let toolbarRow = document.querySelector('.toolbar-row');
 let tool = document.querySelector('.tool');
 let clearCanvasButton = document.querySelector('.clear-button');
 let refreshColorsButton = document.querySelector('.color-button');
+let canvasSizeButton = document.querySelector('.resolution-button');
 let isDrawing = false;
 let color = 'yellow';
 //------------------------------------------------------
@@ -62,6 +63,17 @@ refreshColorsButton.addEventListener('click', e => {
     createToolBar(12, 2);
 });
 
+canvasSizeButton.addEventListener('click', e => {
+    let newSize = prompt("Enter a size between 1 - 100");
+    if(newSize > 0 && newSize <= 100) {
+        while(canvas.firstChild) {
+            canvas.removeChild(canvas.firstChild);
+        }
+        createCanvas(newSize);
+    } else {
+        alert("Invalid input. Enter a number between 1 - 100");
+    }
+});
 
 function createCanvas(size) {
     for (let i = 0; i < size; i++) {
