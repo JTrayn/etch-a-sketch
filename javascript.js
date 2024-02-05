@@ -61,6 +61,7 @@ canvas.addEventListener('mouseover', e => {
 toolbar.addEventListener('click', e => {
     if(e.target.className === 'tool') {
         color = e.target.style.backgroundColor;
+        colorPicker.value = convertRGBtoHex(color);
         isRainbow = false;
         isColorPicking = false;
     }
@@ -80,6 +81,7 @@ refreshColorsButton.addEventListener('click', e => {
         toolbar.removeChild(toolbar.firstChild);
     }
     createToolBar(12, 2);
+    toolbar.appendChild(colorPicker);
 });
 
 canvasSizeButton.addEventListener('click', e => {
@@ -127,15 +129,19 @@ colorReplaceButton.addEventListener('click', e => {
 });
 
 colorPicker.addEventListener('change', e => {
-    let pixels = document.querySelectorAll('.pixel');
-    console.log(pixels);
-    for(let pixel of pixels) {
-        console.log(`pixel color: ${pixel.style.background}`);
-        console.log(`my conversion: ${convertRGBtoHex(pixel.style.background)}`);
-        console.log(`selected color: ${selectedColor}`);
-        if(convertRGBtoHex(pixel.style.background) === selectedColor) {
-            pixel.style.background = colorPicker.value;
+    if(isColorPicking) {
+        let pixels = document.querySelectorAll('.pixel');
+        console.log(pixels);
+
+        for(let pixel of pixels) {
+            if(convertRGBtoHex(pixel.style.background) === selectedColor) {
+                pixel.style.background = colorPicker.value;
+            }
         }
+    colorReplaceButton.style.background = '';
+    isColorPicking = false;
+    } else {
+        color = colorPicker.value;
     }
 });
 
