@@ -49,7 +49,7 @@ canvas.addEventListener('mousedown', e => {
     }
 });
 
-canvas.addEventListener('mouseup', e => {
+document.addEventListener('mouseup', e => {
     isDrawing = false;
 });
 
