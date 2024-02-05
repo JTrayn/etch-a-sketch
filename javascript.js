@@ -7,34 +7,33 @@
  */
 
 const SCREEN_SIZE = 50;
+let color = '#FFFF00';
+let selectedColor = '#FFFF00';
+let isDrawing = false;
+let isRainbow = false;
+let isColorPicking = false;
 let canvas = document.querySelector('.canvas');
 let row = document.querySelector('.row');
 let pixel = document.querySelector('.pixel');
 let toolbar = document.querySelector('.toolbar');
-let toolbarRow = document.querySelector('.toolbar-row');
-let tool = document.querySelector('.tool');
+let toolbox = document.querySelector('.tool-box');
+let colorPicker = document.querySelector('.color-picker');
+let colorSwatch = document.querySelector('.color-swatch');
+let swatchRow = document.querySelector('.swatch-row');
+let swatchPixel = document.querySelector('.swatch-pixel');
 let clearCanvasButton = document.querySelector('.clear-button');
 let refreshColorsButton = document.querySelector('.color-button');
 let canvasSizeButton = document.querySelector('.resolution-button');
 let rainbowButton = document.querySelector('.rainbow-button');
 let eraserButton = document.querySelector('.eraser-button');
 let colorReplaceButton = document.querySelector('.color-replace-button');
-let colorPicker = document.createElement('input');
-colorPicker.type = 'color';
-colorPicker.style.height = '100px';
-colorPicker.style.width = '100px';
-let isDrawing = false;
-let isRainbow = false;
-let isColorPicking = false;
-let color = 'rgb(255, 255, 0)';
-colorPicker.value = convertRGBtoHex(color);
-let selectedColor = "#FFFFFF";
+
 //------------------------------------------------------
 
 createCanvas(SCREEN_SIZE);
-createToolBar(12, 2);
-toolbar.appendChild(colorPicker);
+createColorSwatch(12, 4);
 
+// CANVAS DRAWING
 canvas.addEventListener('mousedown', e => {
     if (isColorPicking === false) {
         isDrawing = true;
@@ -58,15 +57,32 @@ canvas.addEventListener('mouseover', e => {
     }
 });
 
-toolbar.addEventListener('click', e => {
-    if(e.target.className === 'tool') {
+// COLOR SWATCH
+colorSwatch.addEventListener('click', e => {
+    if(e.target.className === 'swatch-pixel') {
         color = e.target.style.backgroundColor;
         colorPicker.value = convertRGBtoHex(color);
-        isRainbow = false;
-        isColorPicking = false;
+        resetState();
     }
 });
 
+// COLOR PICKER
+colorPicker.addEventListener('change', e => {
+    if(isColorPicking) {
+        let pixels = document.querySelectorAll('.pixel');
+
+        for(let pixel of pixels) {
+            if(convertRGBtoHex(pixel.style.background) === selectedColor) {
+                pixel.style.background = colorPicker.value;
+            }
+        }
+    resetState();
+    } else {
+        color = colorPicker.value;
+    }
+});
+
+// BUTTONS
 clearCanvasButton.addEventListener('click', e => {
     
     while(canvas.firstChild) {
@@ -77,11 +93,10 @@ clearCanvasButton.addEventListener('click', e => {
 
 refreshColorsButton.addEventListener('click', e => {
 
-    while(toolbar.firstChild) {
-        toolbar.removeChild(toolbar.firstChild);
+    while(colorSwatch.firstChild) {
+        colorSwatch.removeChild(colorSwatch.firstChild);
     }
-    createToolBar(12, 2);
-    toolbar.appendChild(colorPicker);
+    createColorSwatch(12, 4);
 });
 
 canvasSizeButton.addEventListener('click', e => {
@@ -97,57 +112,39 @@ canvasSizeButton.addEventListener('click', e => {
 });
 
 rainbowButton.addEventListener('click', e => {
+    resetState();
     isRainbow = true;
-    isColorPicking = false;
 });
 
 eraserButton.addEventListener('click', e => {
+    resetState();
     color = "rgb(255, 255, 255, 0)";
-    isRainbow = false;
-    isColorPicking = false;
+    
 });
-
 
 colorReplaceButton.addEventListener('click', e => {
     
     isColorPicking = true;
-    canvas.addEventListener('click', configureColorPicker);
     colorReplaceButton.disabled = true;
+    canvas.addEventListener('click', configureColorReplacer);
 
-    function configureColorPicker(e) {
+    function configureColorReplacer(e) {
         if(e.target.className === 'pixel') {
-            selectedColor = e.target.style.background;
-            console.log(`You selected color: ${e.target.style.background}`);
-            console.log(`converted: ${convertRGBtoHex(e.target.style.background)}`);
-            colorReplaceButton.disabled = false;
             colorPicker.value = convertRGBtoHex(e.target.style.background);
+            colorPicker.style.border = '1px solid rgb(255, 241, 168)';
+            colorPicker.style.boxShadow = '2px 2px 8px 8px rgb(255, 241, 168)';
             selectedColor = convertRGBtoHex(e.target.style.background);
-            colorReplaceButton.style.background = selectedColor;
-            canvas.removeEventListener('click', configureColorPicker);
+            colorReplaceButton.style.background = e.target.style.background;
+            colorReplaceButton.disabled = false;
+            canvas.removeEventListener('click', configureColorReplacer);
         }
     }
 });
 
-colorPicker.addEventListener('change', e => {
-    if(isColorPicking) {
-        let pixels = document.querySelectorAll('.pixel');
-        console.log(pixels);
 
-        for(let pixel of pixels) {
-            if(convertRGBtoHex(pixel.style.background) === selectedColor) {
-                pixel.style.background = colorPicker.value;
-            }
-        }
-    colorReplaceButton.style.background = '';
-    isColorPicking = false;
-    } else {
-        color = colorPicker.value;
-    }
-});
 
-//-----------------------------------------------------------
 
-convertRGBtoHex("rgb(44, 234, 92)");
+/* FUNCTIONS **************************************/
 
 /**
  * @param {String} rgbColor - RGB string 
@@ -159,6 +156,9 @@ function convertRGBtoHex(rgbColor) {
     let hexColor = '#';
     let rgbArray = extractRGBArray(rgbColor);
     
+    if (!rgbColor) {
+        return '#FFFFFF';
+    }
     for (let i = 0; i < rgbArray.length; i++) {
         hexColor += hexArray[rgbArray[i]];
     }
@@ -183,16 +183,6 @@ function convertRGBtoHex(rgbColor) {
     }
 }
 
-
-
-
-
-
-
-
-
-//-----------------------------------------------------------
-
 function createCanvas(size) {
     for (let i = 0; i < size; i++) {
     
@@ -214,20 +204,20 @@ function createCanvas(size) {
     }
 }
 
-function createToolBar(rows, collums) {
+function createColorSwatch(rows, collums) {
 
     for (let i = 0; i < rows; i++) {
 
-        let toolbarRow = document.createElement('div');
-        toolbarRow.classList.add('toolbar-row');
-        toolbar.appendChild(toolbarRow);
+        let swatchRow = document.createElement('div');
+        swatchRow.classList.add('swatch-row');
+        colorSwatch.appendChild(swatchRow);
 
         for (let j = 0; j < collums; j++) {
 
-            let tool = document.createElement('div');
-            tool.classList.add('tool');
-            tool.style.background = createRandomColor();
-            toolbarRow.appendChild(tool);
+            let swatchPixel = document.createElement('div');
+            swatchPixel.classList.add('swatch-pixel');
+            swatchPixel.style.background = createRandomColor();
+            swatchRow.appendChild(swatchPixel);
         }
     }
 }
@@ -241,3 +231,11 @@ function createRandomColor() {
     return '#' + randomColor;
 }
 
+function resetState() {
+    isColorPicking = false;
+    colorPicker.style.border = '';
+    colorPicker.style.boxShadow = '';
+    colorReplaceButton.style.background = '';
+    isDrawing = false;
+    isRainbow = false;
+}

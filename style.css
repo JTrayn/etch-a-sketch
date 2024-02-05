@@ -58,7 +58,46 @@ body {
 
     display: flex;
     flex-direction: column;
-    height: 600px;
+    justify-content: space-between;
+    gap: 10px;
+    height: 580px;
+    width: 100px;
+    background-color: rgb(201, 230, 255);
+    padding: 10px;
+    margin: 0px;
+    border: 0px;
+}
+
+.tool-box {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    height: 200px;
+    width: 100px;
+    background-color: white;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+
+}
+
+.color-picker {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    height: 100px;
+    width: 100px;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+}
+
+.color-swatch {
+
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    height: 300px;
     width: 100px;
     background-color: white;
     padding: 0px;
@@ -66,7 +105,7 @@ body {
     border: 0px;
 }
 
-.toolbar-row {
+.swatch-row {
     display: flex;
     flex: 1 1 0;
     margin: 0px;
@@ -74,7 +113,7 @@ body {
     border: 0px;
 }
 
-.tool {
+.swatch-pixel {
     flex: 1 1 0;
     margin: 0px;
     padding: 0px;
