@@ -9,18 +9,22 @@
 const SCREEN_SIZE = 50;
 let color = '#FFFF00';
 let selectedColor = '#FFFF00';
+// Flags:
 let isDrawing = false;
 let isRainbow = false;
 let isColorPicking = false;
+// Canvas:
 let canvas = document.querySelector('.canvas');
 let row = document.querySelector('.row');
 let pixel = document.querySelector('.pixel');
+// Toolbar:
 let toolbar = document.querySelector('.toolbar');
-let toolbox = document.querySelector('.tool-box');
-let colorPicker = document.querySelector('.color-picker');
 let colorSwatch = document.querySelector('.color-swatch');
 let swatchRow = document.querySelector('.swatch-row');
 let swatchPixel = document.querySelector('.swatch-pixel');
+let toolbox = document.querySelector('.tool-box');
+let colorPicker = document.querySelector('.color-picker');
+// Buttons:
 let clearCanvasButton = document.querySelector('.clear-button');
 let refreshColorsButton = document.querySelector('.color-button');
 let canvasSizeButton = document.querySelector('.resolution-button');
@@ -35,6 +39,8 @@ createColorSwatch(12, 4);
 
 // CANVAS DRAWING
 canvas.addEventListener('mousedown', e => {
+    e.preventDefault();
+    console.log('mouse down triggered');
     if (isColorPicking === false) {
         isDrawing = true;
         if(e.target.className === 'pixel') {
@@ -48,7 +54,7 @@ canvas.addEventListener('mouseup', e => {
 });
 
 canvas.addEventListener('mouseover', e => {
-    if(isDrawing === true && e.target.className === 'pixel') {
+    if(isDrawing === true) {
         if(isRainbow) {
             e.target.style.background = createRandomColor();
         } else {
@@ -76,7 +82,8 @@ colorPicker.addEventListener('change', e => {
                 pixel.style.background = colorPicker.value;
             }
         }
-    resetState();
+        color = colorPicker.value;
+        resetState();
     } else {
         color = colorPicker.value;
     }
@@ -114,29 +121,34 @@ canvasSizeButton.addEventListener('click', e => {
 rainbowButton.addEventListener('click', e => {
     resetState();
     isRainbow = true;
+    rainbowButton.classList.add('highlight');
 });
 
 eraserButton.addEventListener('click', e => {
     resetState();
     color = "rgb(255, 255, 255, 0)";
-    
+    eraserButton.classList.add('highlight');
 });
 
 colorReplaceButton.addEventListener('click', e => {
     
+    resetState();
     isColorPicking = true;
     colorReplaceButton.disabled = true;
+    canvas.classList.add('cursor-color-picker');
+    console.log('asdasdasd');
     canvas.addEventListener('click', configureColorReplacer);
 
     function configureColorReplacer(e) {
         if(e.target.className === 'pixel') {
             colorPicker.value = convertRGBtoHex(e.target.style.background);
-            colorPicker.style.border = '1px solid rgb(255, 241, 168)';
-            colorPicker.style.boxShadow = '2px 2px 8px 8px rgb(255, 241, 168)';
+            colorPicker.classList.add('highlight');
             selectedColor = convertRGBtoHex(e.target.style.background);
             colorReplaceButton.style.background = e.target.style.background;
             colorReplaceButton.disabled = false;
+            canvas.classList.remove('cursor-color-picker');
             canvas.removeEventListener('click', configureColorReplacer);
+            
         }
     }
 });
@@ -233,9 +245,12 @@ function createRandomColor() {
 
 function resetState() {
     isColorPicking = false;
-    colorPicker.style.border = '';
-    colorPicker.style.boxShadow = '';
     colorReplaceButton.style.background = '';
     isDrawing = false;
     isRainbow = false;
+    canvas.classList.remove('cursor-color-picker');
+    let highlightedElements = document.querySelectorAll('.highlight');
+    for(let element of highlightedElements) {
+        element.classList.remove('highlight');
+    }
 }

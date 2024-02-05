@@ -25,7 +25,11 @@ body {
 
 .card-bottom {
     display: flex;
-    gap: 30px;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: rgb(201, 230, 255);
+    
 }
 
 .canvas {
@@ -120,10 +124,18 @@ body {
     border: 0px;
 }
 
+.swatch-pixel:hover {
+    filter: brightness(120%);
+}
+
 button {
     flex: 1;
-    padding: 10px;
+    padding: 5px;
     border-radius: 8px;
+}
+
+button:hover {
+    background-color: rgb(215, 223, 231);
 }
 
 .rainbow-button {
@@ -137,4 +149,12 @@ p {
     margin: 0px;
     padding: 0px;
     border-radius: 4px;
+}
+
+.highlight {
+    box-shadow: 2px 2px 8px 8px rgb(255, 241, 168);
+}
+
+.cursor-color-picker {
+    cursor: url('./images/color-picker.png') 2 32, auto;
 }
