@@ -17,6 +17,7 @@ let clearCanvasButton = document.querySelector('.clear-button');
 let refreshColorsButton = document.querySelector('.color-button');
 let canvasSizeButton = document.querySelector('.resolution-button');
 let rainbowButton = document.querySelector('.rainbow-button');
+let eraserButton = document.querySelector('.eraser-button');
 let isDrawing = false;
 let isRainbow = false;
 let color = 'yellow';
@@ -84,6 +85,11 @@ canvasSizeButton.addEventListener('click', e => {
 
 rainbowButton.addEventListener('click', e => {
     isRainbow = true;
+});
+
+eraserButton.addEventListener('click', e => {
+    color = "rgb(255, 255, 255, 0)";
+    isRainbow = false;
 });
 
 function createCanvas(size) {
