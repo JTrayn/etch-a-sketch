@@ -18,19 +18,29 @@ let refreshColorsButton = document.querySelector('.color-button');
 let canvasSizeButton = document.querySelector('.resolution-button');
 let rainbowButton = document.querySelector('.rainbow-button');
 let eraserButton = document.querySelector('.eraser-button');
+let colorReplaceButton = document.querySelector('.color-replace-button');
+let colorPicker = document.createElement('input');
+colorPicker.type = 'color';
+colorPicker.style.height = '100px';
+colorPicker.style.width = '100px';
 let isDrawing = false;
 let isRainbow = false;
-let color = 'yellow';
+let isColorPicking = false;
+let color = 'rgb(255, 255, 0)';
+colorPicker.value = convertRGBtoHex(color);
+let selectedColor = "#FFFFFF";
 //------------------------------------------------------
 
 createCanvas(SCREEN_SIZE);
 createToolBar(12, 2);
-
+toolbar.appendChild(colorPicker);
 
 canvas.addEventListener('mousedown', e => {
-    isDrawing = true;
-    if(e.target.className === 'pixel') {
-        e.target.style.background = color;
+    if (isColorPicking === false) {
+        isDrawing = true;
+        if(e.target.className === 'pixel') {
+            e.target.style.background = color;
+        }
     }
 });
 
@@ -52,6 +62,7 @@ toolbar.addEventListener('click', e => {
     if(e.target.className === 'tool') {
         color = e.target.style.backgroundColor;
         isRainbow = false;
+        isColorPicking = false;
     }
 });
 
@@ -85,12 +96,96 @@ canvasSizeButton.addEventListener('click', e => {
 
 rainbowButton.addEventListener('click', e => {
     isRainbow = true;
+    isColorPicking = false;
 });
 
 eraserButton.addEventListener('click', e => {
     color = "rgb(255, 255, 255, 0)";
     isRainbow = false;
+    isColorPicking = false;
 });
+
+
+colorReplaceButton.addEventListener('click', e => {
+    
+    isColorPicking = true;
+    canvas.addEventListener('click', configureColorPicker);
+    colorReplaceButton.disabled = true;
+
+    function configureColorPicker(e) {
+        if(e.target.className === 'pixel') {
+            selectedColor = e.target.style.background;
+            console.log(`You selected color: ${e.target.style.background}`);
+            console.log(`converted: ${convertRGBtoHex(e.target.style.background)}`);
+            colorReplaceButton.disabled = false;
+            colorPicker.value = convertRGBtoHex(e.target.style.background);
+            selectedColor = convertRGBtoHex(e.target.style.background);
+            colorReplaceButton.style.background = selectedColor;
+            canvas.removeEventListener('click', configureColorPicker);
+        }
+    }
+});
+
+colorPicker.addEventListener('change', e => {
+    let pixels = document.querySelectorAll('.pixel');
+    console.log(pixels);
+    for(let pixel of pixels) {
+        console.log(`pixel color: ${pixel.style.background}`);
+        console.log(`my conversion: ${convertRGBtoHex(pixel.style.background)}`);
+        console.log(`selected color: ${selectedColor}`);
+        if(convertRGBtoHex(pixel.style.background) === selectedColor) {
+            pixel.style.background = colorPicker.value;
+        }
+    }
+});
+
+//-----------------------------------------------------------
+
+convertRGBtoHex("rgb(44, 234, 92)");
+
+/**
+ * @param {String} rgbColor - RGB string 
+ * @returns {String} HEX string
+ */
+function convertRGBtoHex(rgbColor) {
+
+    let hexArray = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+    let hexColor = '#';
+    let rgbArray = extractRGBArray(rgbColor);
+    
+    for (let i = 0; i < rgbArray.length; i++) {
+        hexColor += hexArray[rgbArray[i]];
+    }
+    return hexColor;
+
+    /**
+     * @param {String} color RGB string
+     * @returns {Number[]} Base 10 HEX array
+     */
+    function extractRGBArray(color) {
+    
+        let array = [];
+        let rgbArray = [];
+        array = color.slice(4, color.length-1).replaceAll(', ', ' ').split(' ');
+        for (let i = 0; i < array.length; i++) {
+            let first = Math.floor((array[i] / 16));  
+            rgbArray.push(first);
+            let second = Math.floor((((array[i] / 16) - (Math.floor(array[i] / 16))) * 16));
+            rgbArray.push(second);
+        }
+        return rgbArray;
+    }
+}
+
+
+
+
+
+
+
+
+
+//-----------------------------------------------------------
 
 function createCanvas(size) {
     for (let i = 0; i < size; i++) {
