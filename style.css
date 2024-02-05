@@ -1,0 +1,42 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.card {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background-color: rgb(160, 211, 255);
+    padding: 50px;
+    border-radius: 20px;
+}
+
+.screen {
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    width: 600px;
+    background-color: white;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+}
+
+.row {
+    display: flex;
+    flex: 1 1 0;
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+}
+
+.pixel {
+    flex: 1 1 0;
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+}
+
