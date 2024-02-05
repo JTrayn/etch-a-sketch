@@ -16,7 +16,9 @@ let tool = document.querySelector('.tool');
 let clearCanvasButton = document.querySelector('.clear-button');
 let refreshColorsButton = document.querySelector('.color-button');
 let canvasSizeButton = document.querySelector('.resolution-button');
+let rainbowButton = document.querySelector('.rainbow-button');
 let isDrawing = false;
+let isRainbow = false;
 let color = 'yellow';
 //------------------------------------------------------
 
@@ -37,13 +39,18 @@ canvas.addEventListener('mouseup', e => {
 
 canvas.addEventListener('mouseover', e => {
     if(isDrawing === true && e.target.className === 'pixel') {
-        e.target.style.background = color;
+        if(isRainbow) {
+            e.target.style.background = createRandomColor();
+        } else {
+            e.target.style.background = color;
+        }
     }
 });
 
 toolbar.addEventListener('click', e => {
     if(e.target.className === 'tool') {
         color = e.target.style.backgroundColor;
+        isRainbow = false;
     }
 });
 
@@ -73,6 +80,10 @@ canvasSizeButton.addEventListener('click', e => {
     } else {
         alert("Invalid input. Enter a number between 1 - 100");
     }
+});
+
+rainbowButton.addEventListener('click', e => {
+    isRainbow = true;
 });
 
 function createCanvas(size) {
@@ -112,14 +123,14 @@ function createToolBar(rows, collums) {
             toolbarRow.appendChild(tool);
         }
     }
+}
 
-    function createRandomColor() {
-        const HEX_VALUES = '0123456789ABCDEF';
-        let randomColor = '';
-        for (let i = 0; i < 6; i++) {
-            randomColor += HEX_VALUES[Math.floor(Math.random() * 16)];
-        }
-        return '#' + randomColor;
+function createRandomColor() {
+    const HEX_VALUES = '0123456789ABCDEF';
+    let randomColor = '';
+    for (let i = 0; i < 6; i++) {
+        randomColor += HEX_VALUES[Math.floor(Math.random() * 16)];
     }
+    return '#' + randomColor;
 }
 
